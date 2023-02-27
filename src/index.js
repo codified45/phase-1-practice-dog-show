@@ -2,7 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tableBody = document.getElementById('table-body');
     const dogForm = document.getElementById('dog-form');
-    fetch('http://localhost:3000/dogs')
+    let hasInputChanged = false;
+    dogForm.addEventListener('input', inputAlert); // delete later
+    dogForm.addEventListener('submit', patchDog);
+    let dogBeingEditedId; 
+    const dogsUrl = 'http://localhost:3000/dogs';
+    fetch(dogsUrl)
     .then(res => res.json())
         .then(obj => {
             for (const element of obj){
@@ -25,25 +30,49 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
 
-    
+    function inputAlert() {
+        console.log('input has been changed!');
+        hasInputChanged = true;
+    };
 
     function editDog(e) {
         console.log('Im in EditDog');
         populateForm(e);
+        console.log("after populateForm, in edit dog");
+        dogBeingEditedId = e.target.id;
+        console.log(`dogBeingEditedId set as ${e.target.id}`);
+
     };
 
-    function populateForm(e) {
-        console.log('I\'m in populate form');
-        console.log(e.target.parentNode.parentNode.children[0].textContent);
+    function populateForm(e) { //done
         dogForm.name.value = e.target.parentNode.parentNode.children[0].textContent;
         dogForm.breed.value = e.target.parentNode.parentNode.children[1].textContent;
         dogForm.sex.value = e.target.parentNode.parentNode.children[2].textContent;
-
     };
 
-    function patchDog() {
+     // const patchConfig = {
+    //     method: "PATCH",
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //         "Application": "application/json",
+    //     },
+    //     body: {JSON.stringify()},
+    // };
+
+    function patchDog(e) {
+        e.preventDefault();
+        let editDogUrl = dogsUrl + `/${dogBeingEditedId}`;
+        console.log(editDogUrl);
+        if (hasInputChanged){
+            fetch(editDogUrl, patchConfig)
+            .then(res => res.json())
+                .then(obj => {
+                    console.log(obj);
+                });
+        };
 
 
         dogForm.reset();
+        hasInputChanged = false;
     };
 })
