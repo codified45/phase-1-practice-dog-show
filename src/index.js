@@ -18,19 +18,32 @@ document.addEventListener('DOMContentLoaded', () => {
             cell3.textContent = element.sex;
             editBtn.textContent = 'Edit Dog';
             editBtn.id = element.id;
-            document.addEventListener('click', editDog);
+            editBtn.addEventListener('click', editDog);
             cell4.append(editBtn);
             tableRow.append(cell1, cell2, cell3, cell4);
             tableBody.appendChild(tableRow);
             };
         });
 
+    
+
     function editDog(e) {
         console.log('Im in EditDog');
-        
+        populateForm(e);
+    };
+
+    function populateForm(e) {
+        console.log('I\'m in populate form');
+        console.log(e.target.parentNode.parentNode.children[0].textContent);
+        dogForm.name.value = e.target.parentNode.parentNode.children[0].textContent;
+        dogForm.breed.value = e.target.parentNode.parentNode.children[1].textContent;
+        dogForm.sex.value = e.target.parentNode.parentNode.children[2].textContent;
+
     };
 
     function patchDog() {
 
+
+        dogForm.reset();
     };
 })
