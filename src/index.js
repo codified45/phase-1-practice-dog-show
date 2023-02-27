@@ -7,8 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
     dogForm.addEventListener('submit', patchDog);
     let dogBeingEditedId; 
     const dogsUrl = 'http://localhost:3000/dogs';
-    fetch(dogsUrl)
-    .then(res => res.json())
+    fetchDogs();    
+
+    function fetchDogs() {
+        fetch(dogsUrl)
+        .then(res => res.json())
         .then(obj => {
             for (const element of obj){
             console.log(element.name);
@@ -29,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             tableBody.appendChild(tableRow);
             };
         });
+    };
 
     function inputAlert() {
         console.log('input has been changed!');
@@ -50,27 +54,36 @@ document.addEventListener('DOMContentLoaded', () => {
         dogForm.sex.value = e.target.parentNode.parentNode.children[2].textContent;
     };
 
-     // const patchConfig = {
-    //     method: "PATCH",
-    //     headers: {
-    //         "Content-Type": "application/json",
-    //         "Application": "application/json",
-    //     },
-    //     body: {JSON.stringify()},
-    // };
-
     function patchDog(e) {
         e.preventDefault();
+        console.log(e.target.name.value);
         let editDogUrl = dogsUrl + `/${dogBeingEditedId}`;
         console.log(editDogUrl);
+
+        let formData = {
+            name: e.target.name.value,
+            breed: e.target.breed.value,
+            sex: e.target.sex.value,
+        };
+
+        const patchConfig = {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                "Application": "application/json",
+            },
+            body: JSON.stringify(formData),
+        };
+
         if (hasInputChanged){
             fetch(editDogUrl, patchConfig)
             .then(res => res.json())
-                .then(obj => {
-                    console.log(obj);
-                });
-        };
-
+            .then(obj => {
+                console.log(obj);
+                tableBody.replaceChildren();
+                fetchDogs();
+            });
+        } else {window.alert('No changes have been made.')};
 
         dogForm.reset();
         hasInputChanged = false;
